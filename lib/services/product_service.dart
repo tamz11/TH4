@@ -5,6 +5,7 @@ import 'package:th4/models/product.dart';
 
 class ProductService {
   static const String _baseUrl = 'https://dummyjson.com/products?limit=100';
+  static const String _categoriesUrl = 'https://dummyjson.com/products/categories';
 
   Future<List<Product>> fetchProducts() async {
     final response = await http.get(Uri.parse(_baseUrl));
@@ -32,6 +33,32 @@ class ProductService {
           };
           return Product.fromJson(normalized);
         })
+        .toList();
+  }
+
+  Future<List<String>> fetchCategories() async {
+    final response = await http.get(Uri.parse(_categoriesUrl));
+    if (response.statusCode != 200) {
+      throw Exception('Không thể tải danh mục');
+    }
+
+    final data = jsonDecode(response.body);
+    if (data is! List) {
+      return [];
+    }
+
+    return data
+        .map((item) {
+          if (item is String) {
+            return item;
+          }
+          if (item is Map<String, dynamic>) {
+            return (item['slug'] ?? item['name'] ?? '').toString();
+          }
+          return '';
+        })
+        .where((item) => item.isNotEmpty)
+        .toSet()
         .toList();
   }
 }
