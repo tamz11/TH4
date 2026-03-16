@@ -28,17 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200',
   ];
 
-  final List<Map<String, dynamic>> _categories = const [
-    {'icon': Icons.checkroom, 'name': 'Fashion'},
-    {'icon': Icons.phone_android, 'name': 'Phone'},
-    {'icon': Icons.face_retouching_natural, 'name': 'Beauty'},
-    {'icon': Icons.kitchen, 'name': 'Home'},
-    {'icon': Icons.sports_basketball, 'name': 'Sport'},
-    {'icon': Icons.chair, 'name': 'Furniture'},
-    {'icon': Icons.pets, 'name': 'Pet'},
-    {'icon': Icons.menu_book, 'name': 'Book'},
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -203,34 +192,61 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
-                          height: 130,
+                          height: 148,
                           child: GridView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: _categories.length,
+                            itemCount: provider.categories.length + 1,
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 1,
+                              childAspectRatio: 1.08,
                               mainAxisSpacing: 8,
                               crossAxisSpacing: 8,
                             ),
                             itemBuilder: (_, index) {
-                              final category = _categories[index];
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(category['icon'] as IconData,
-                                        color: const Color(0xFFEE4D2D)),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      category['name'] as String,
-                                      style: const TextStyle(fontSize: 12),
+                              final isAll = index == 0;
+                              final slug = isAll ? null : provider.categories[index - 1];
+                              final selected = provider.selectedCategory == slug;
+                              return InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () => provider.selectCategory(slug),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: selected
+                                        ? const Color(0xFFFFEFEA)
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: selected
+                                          ? const Color(0xFFEE4D2D)
+                                          : Colors.transparent,
                                     ),
-                                  ],
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        _iconForCategory(slug, index),
+                                        size: 20,
+                                        color: const Color(0xFFEE4D2D),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                                        child: Text(
+                                          isAll ? 'Tất cả' : _prettyCategory(slug!),
+                                          style: const TextStyle(fontSize: 10.5, height: 1.05),
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -293,5 +309,43 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  IconData _iconForCategory(String? slug, int fallbackIndex) {
+    final value = slug ?? 'all';
+    if (value.contains('beauty')) return Icons.face_retouching_natural;
+    if (value.contains('skin')) return Icons.spa_outlined;
+    if (value.contains('fragrance')) return Icons.local_florist_outlined;
+    if (value.contains('furniture')) return Icons.chair_outlined;
+    if (value.contains('groceries')) return Icons.local_grocery_store_outlined;
+    if (value.contains('home')) return Icons.kitchen_outlined;
+    if (value.contains('mobile') || value.contains('phone')) return Icons.phone_android;
+    if (value.contains('laptop')) return Icons.laptop_chromebook_outlined;
+    if (value.contains('motor')) return Icons.two_wheeler_outlined;
+    if (value.contains('vehicle')) return Icons.directions_car_outlined;
+    if (value.contains('shirt') || value.contains('dress')) return Icons.checkroom_outlined;
+    if (value.contains('shoe')) return Icons.hiking_outlined;
+    if (value.contains('watch')) return Icons.watch_outlined;
+    if (value.contains('bag')) return Icons.shopping_bag_outlined;
+    if (value.contains('jewellery')) return Icons.diamond_outlined;
+
+    const fallback = [
+      Icons.storefront_outlined,
+      Icons.category_outlined,
+      Icons.shopping_cart_outlined,
+      Icons.sell_outlined,
+      Icons.local_offer_outlined,
+    ];
+    return fallback[fallbackIndex % fallback.length];
+  }
+
+  String _prettyCategory(String slug) {
+    return slug
+        .split('-')
+        .map((part) {
+          if (part.isEmpty) return part;
+          return part[0].toUpperCase() + part.substring(1);
+        })
+        .join(' ');
   }
 }
