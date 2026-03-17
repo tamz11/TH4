@@ -90,8 +90,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverAppBar(
                   pinned: true,
                   expandedHeight: 128,
-                  backgroundColor:
-                      _isCollapsed ? const Color(0xFFEE4D2D) : Colors.transparent,
+                  backgroundColor: _isCollapsed
+                      ? const Color(0xFFEE4D2D)
+                      : Colors.transparent,
                   title: const Text('TH4 - Nhóm [Số nhóm]'),
                   foregroundColor: Colors.white,
                   elevation: _isCollapsed ? 2 : 0,
@@ -132,7 +133,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             SizedBox(width: 10),
                             Icon(Icons.search, color: Colors.grey),
                             SizedBox(width: 8),
-                            Text('Tìm sản phẩm', style: TextStyle(color: Colors.grey)),
+                            Text(
+                              'Tìm sản phẩm',
+                              style: TextStyle(color: Colors.grey),
+                            ),
                           ],
                         ),
                       ),
@@ -151,12 +155,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               PageView.builder(
                                 controller: _bannerController,
-                                onPageChanged: (index) => setState(() => _bannerIndex = index),
+                                onPageChanged: (index) =>
+                                    setState(() => _bannerIndex = index),
                                 itemCount: _banners.length,
                                 itemBuilder: (_, i) {
                                   return ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: Image.network(_banners[i], fit: BoxFit.cover),
+                                    child: Image.network(
+                                      _banners[i],
+                                      fit: BoxFit.cover,
+                                    ),
                                   );
                                 },
                               ),
@@ -168,8 +176,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: List.generate(_banners.length, (i) {
                                     return AnimatedContainer(
-                                      duration: const Duration(milliseconds: 200),
-                                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                                      duration: const Duration(
+                                        milliseconds: 200,
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 3,
+                                      ),
                                       width: _bannerIndex == i ? 16 : 6,
                                       height: 6,
                                       decoration: BoxDecoration(
@@ -188,7 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 12),
                         const Text(
                           'Danh mục',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
@@ -196,16 +211,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: GridView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: provider.categories.length + 1,
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 1.08,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                            ),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 1.08,
+                                  mainAxisSpacing: 8,
+                                  crossAxisSpacing: 8,
+                                ),
                             itemBuilder: (_, index) {
                               final isAll = index == 0;
-                              final slug = isAll ? null : provider.categories[index - 1];
-                              final selected = provider.selectedCategory == slug;
+                              final slug = isAll
+                                  ? null
+                                  : provider.categories[index - 1];
+                              final selected =
+                                  provider.selectedCategory == slug;
                               return InkWell(
                                 borderRadius: BorderRadius.circular(10),
                                 onTap: () => provider.selectCategory(slug),
@@ -236,10 +255,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       const SizedBox(height: 2),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                        ),
                                         child: Text(
-                                          isAll ? 'Tất cả' : _prettyCategory(slug!),
-                                          style: const TextStyle(fontSize: 10.5, height: 1.05),
+                                          isAll
+                                              ? 'Tất cả'
+                                              : _prettyCategory(slug!),
+                                          style: const TextStyle(
+                                            fontSize: 10.5,
+                                            height: 1.05,
+                                          ),
                                           maxLines: 1,
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
@@ -255,7 +281,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 8),
                         const Text(
                           'Gợi ý hôm nay',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ],
                     ),
@@ -273,19 +302,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     sliver: SliverGrid(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: 0.63,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final product = provider.products[index];
-                          return ProductCard(product: product);
-                        },
-                        childCount: provider.products.length,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                            childAspectRatio: 0.63,
+                          ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final product = provider.products[index];
+                        return ProductCard(product: product);
+                      }, childCount: provider.products.length),
                     ),
                   ),
                 SliverToBoxAdapter(
@@ -319,11 +346,13 @@ class _HomeScreenState extends State<HomeScreen> {
     if (value.contains('furniture')) return Icons.chair_outlined;
     if (value.contains('groceries')) return Icons.local_grocery_store_outlined;
     if (value.contains('home')) return Icons.kitchen_outlined;
-    if (value.contains('mobile') || value.contains('phone')) return Icons.phone_android;
+    if (value.contains('mobile') || value.contains('phone'))
+      return Icons.phone_android;
     if (value.contains('laptop')) return Icons.laptop_chromebook_outlined;
     if (value.contains('motor')) return Icons.two_wheeler_outlined;
     if (value.contains('vehicle')) return Icons.directions_car_outlined;
-    if (value.contains('shirt') || value.contains('dress')) return Icons.checkroom_outlined;
+    if (value.contains('shirt') || value.contains('dress'))
+      return Icons.checkroom_outlined;
     if (value.contains('shoe')) return Icons.hiking_outlined;
     if (value.contains('watch')) return Icons.watch_outlined;
     if (value.contains('bag')) return Icons.shopping_bag_outlined;
