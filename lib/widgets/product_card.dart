@@ -41,8 +41,9 @@ class ProductCard extends StatelessWidget {
                     child: Hero(
                       tag: 'product-${product.id}',
                       child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.vertical(top: Radius.circular(14)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(14),
+                        ),
                         child: Image.network(
                           product.image,
                           fit: BoxFit.cover,
@@ -56,7 +57,9 @@ class ProductCard extends StatelessWidget {
                               child: const SizedBox(
                                 width: 18,
                                 height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               ),
                             );
                           },
@@ -102,7 +105,10 @@ class ProductCard extends StatelessWidget {
                 product.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w500, height: 1.2),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  height: 1.2,
+                ),
               ),
             ),
             Padding(
@@ -120,7 +126,11 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8, 2, 8, 8),
               child: Row(
                 children: [
-                  const Icon(Icons.star_rounded, size: 14, color: Color(0xFFF9A825)),
+                  const Icon(
+                    Icons.star_rounded,
+                    size: 14,
+                    color: Color(0xFFF9A825),
+                  ),
                   const SizedBox(width: 2),
                   Text(
                     product.rating.toStringAsFixed(1),

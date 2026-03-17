@@ -37,8 +37,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Chọn phân loại',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Chọn phân loại',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     const Text('Size'),
                     Wrap(
@@ -48,7 +53,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             (size) => ChoiceChip(
                               label: Text(size),
                               selected: selectedSize == size,
-                              onSelected: (_) => setModalState(() => selectedSize = size),
+                              onSelected: (_) =>
+                                  setModalState(() => selectedSize = size),
                             ),
                           )
                           .toList(),
@@ -119,22 +125,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       return;
     }
 
-    context.read<CartProvider>().addItem(
-          product: result.product,
-          size: result.size,
-          color: result.color,
-          quantity: result.quantity,
-        );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Thêm thành công')),
-    );
-
     if (buyNow) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => CheckoutScreen(items: [result])),
+        MaterialPageRoute(
+          builder: (_) => CheckoutScreen(items: [result], isBuyNow: true),
+        ),
       );
+    } else {
+      context.read<CartProvider>().addItem(
+        product: result.product,
+        size: result.size,
+        color: result.color,
+        quantity: result.quantity,
+      );
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Thêm thành công')));
     }
   }
 
@@ -180,7 +188,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               children: [
                 Text(
                   widget.product.title,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -221,12 +232,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Mô tả', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Mô tả',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   widget.product.description,
                   maxLines: _showMore ? null : 5,
-                  overflow: _showMore ? TextOverflow.visible : TextOverflow.ellipsis,
+                  overflow: _showMore
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
                 ),
                 TextButton(
                   onPressed: () => setState(() => _showMore = !_showMore),
