@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   final PageController _bannerController = PageController();
+  final TextEditingController _searchController = TextEditingController();
   Timer? _bannerTimer;
   int _bannerIndex = 0;
   bool _isCollapsed = false;
@@ -32,7 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProductProvider>().initIfNeeded();
+      final provider = context.read<ProductProvider>();
+      _searchController.text = provider.searchQuery;
+      provider.initIfNeeded();
     });
 
     _scrollController.addListener(_onScroll);
@@ -56,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _scrollController.dispose();
     _bannerController.dispose();
+    _searchController.dispose();
     _bannerTimer?.cancel();
     super.dispose();
   }
@@ -93,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   backgroundColor: _isCollapsed
                       ? const Color(0xFFEE4D2D)
                       : Colors.transparent,
-                  title: const Text('TH4 - Nhóm [Số nhóm]'),
+                  title: const Text('TH4 - Nhóm 14'),
                   foregroundColor: Colors.white,
                   elevation: _isCollapsed ? 2 : 0,
                   actions: [
@@ -115,29 +119,67 @@ class _HomeScreenState extends State<HomeScreen> {
                           end: Alignment.bottomCenter,
                         ),
                       ),
-                      padding: const EdgeInsets.fromLTRB(16, 78, 16, 12),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x22000000),
-                              blurRadius: 10,
-                              offset: Offset(0, 3),
+                      padding: const EdgeInsets.fromLTRB(16, 78, 16, 10),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: SizedBox(
+                          height: 46,
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (value) {
+                              context.read<ProductProvider>().setSearchQuery(
+                                value,
+                              );
+                              setState(() {});
+                            },
+                            textInputAction: TextInputAction.search,
+                            decoration: InputDecoration(
+                              hintText: 'Tìm sản phẩm',
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF8D8D8D),
+                              ),
+                              isDense: true,
+                              filled: true,
+                              fillColor: Colors.white,
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF8D8D8D),
+                                size: 22,
+                              ),
+                              suffixIcon: _searchController.text.isNotEmpty
+                                  ? IconButton(
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        context
+                                            .read<ProductProvider>()
+                                            .setSearchQuery('');
+                                        FocusScope.of(context).unfocus();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.close),
+                                      color: const Color(0xFF8D8D8D),
+                                      splashRadius: 18,
+                                    )
+                                  : null,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE7E7E7),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFEE4D2D),
+                                  width: 1.3,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 10,
+                              ),
                             ),
-                          ],
-                        ),
-                        child: const Row(
-                          children: [
-                            SizedBox(width: 10),
-                            Icon(Icons.search, color: Colors.grey),
-                            SizedBox(width: 8),
-                            Text(
-                              'Tìm sản phẩm',
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -324,6 +366,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           : Text(
                               provider.hasMore
                                   ? 'Kéo xuống để tải thêm'
+                                  : provider.products.isEmpty
+                                  ? 'Không tìm thấy sản phẩm'
                                   : 'Đã hết sản phẩm',
                               style: const TextStyle(color: Colors.grey),
                             ),
@@ -369,6 +413,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _prettyCategory(String slug) {
+    const categoryVi = {
+      'beauty': 'Làm đẹp',
+      'fragrances': 'Nước hoa',
+      'furniture': 'Nội thất',
+      'groceries': 'Tạp hóa',
+      'home-decoration': 'Trang trí nhà',
+      'kitchen-accessories': 'Phụ kiện bếp',
+      'laptops': 'Laptop',
+      'mens-shirts': 'Áo nam',
+      'mens-shoes': 'Giày nam',
+      'mens-watches': 'Đồng hồ nam',
+      'mobile-accessories': 'Phụ kiện điện thoại',
+      'motorcycle': 'Xe máy',
+      'skin-care': 'Chăm sóc da',
+      'smartphones': 'Điện thoại',
+      'sports-accessories': 'Phụ kiện thể thao',
+      'sunglasses': 'Kính mát',
+      'tablets': 'Máy tính bảng',
+      'tops': 'Áo kiểu',
+      'vehicle': 'Ô tô',
+      'womens-bags': 'Túi nữ',
+      'womens-dresses': 'Váy nữ',
+      'womens-jewellery': 'Trang sức nữ',
+      'womens-shoes': 'Giày nữ',
+      'womens-watches': 'Đồng hồ nữ',
+    };
+
+    final translated = categoryVi[slug.trim().toLowerCase()];
+    if (translated != null) return translated;
+
     return slug
         .split('-')
         .map((part) {
