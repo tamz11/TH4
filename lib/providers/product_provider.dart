@@ -14,6 +14,7 @@ class ProductProvider extends ChangeNotifier {
   bool _hasMore = true;
   String? _error;
   String? _selectedCategory;
+  String _searchQuery = '';
 
   static const int _pageSize = 8;
   int _page = 1;
@@ -21,6 +22,7 @@ class ProductProvider extends ChangeNotifier {
   List<Product> get products => _products;
   List<String> get categories => _categories;
   String? get selectedCategory => _selectedCategory;
+  String get searchQuery => _searchQuery;
   bool get isLoading => _isLoading;
   bool get isLoadingMore => _isLoadingMore;
   bool get hasMore => _hasMore;
@@ -101,13 +103,34 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Product> get _sourceProducts {
-    if (_selectedCategory == null) {
-      return _allProducts;
+  void setSearchQuery(String value) {
+    final next = value.trim();
+    if (_searchQuery == next) {
+      return;
     }
-    return _allProducts
-        .where((item) => item.category == _selectedCategory)
-        .toList(growable: false);
+
+    _searchQuery = next;
+    _resetPaging();
+    notifyListeners();
+  }
+
+  List<Product> get _sourceProducts {
+    Iterable<Product> filtered = _allProducts;
+
+    if (_selectedCategory != null) {
+      filtered = filtered.where((item) => item.category == _selectedCategory);
+    }
+
+    if (_searchQuery.isNotEmpty) {
+      final keyword = _searchQuery.toLowerCase();
+      filtered = filtered.where((item) {
+        final title = item.title.toLowerCase();
+        final description = item.description.toLowerCase();
+        return title.contains(keyword) || description.contains(keyword);
+      });
+    }
+
+    return filtered.toList(growable: false);
   }
 
   void _resetPaging() {
