@@ -18,4 +18,30 @@ class OrderModel {
     required this.createdAt,
     required this.status,
   });
+
+  factory OrderModel.fromStorageJson(Map<String, dynamic> json) {
+    return OrderModel(
+      id: json['id'] as String,
+      items: (json['items'] as List<dynamic>)
+          .map((e) => CartItem.fromStorageJson(e as Map<String, dynamic>))
+          .toList(),
+      total: (json['total'] as num).toDouble(),
+      address: json['address'] as String,
+      paymentMethod: json['paymentMethod'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      status: json['status'] as String? ?? 'pending',
+    );
+  }
+
+  Map<String, dynamic> toStorageJson() {
+    return {
+      'id': id,
+      'items': items.map((e) => e.toStorageJson()).toList(),
+      'total': total,
+      'address': address,
+      'paymentMethod': paymentMethod,
+      'createdAt': createdAt.toIso8601String(),
+      'status': status,
+    };
+  }
 }

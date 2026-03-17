@@ -44,7 +44,10 @@ class CartScreen extends StatelessWidget {
                       ),
                       onDismissed: (_) => cart.removeItem(item.key),
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -54,7 +57,8 @@ class CartScreen extends StatelessWidget {
                           children: [
                             Checkbox(
                               value: item.selected,
-                              onChanged: (v) => cart.toggleItem(item.key, v ?? false),
+                              onChanged: (v) =>
+                                  cart.toggleItem(item.key, v ?? false),
                             ),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
@@ -76,8 +80,10 @@ class CartScreen extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 2),
-                                  Text('Size ${item.size} - ${item.color}',
-                                      style: const TextStyle(color: Colors.grey)),
+                                  Text(
+                                    'Size ${item.size} - ${item.color}',
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
                                   const SizedBox(height: 2),
                                   Text(
                                     formatVnd(item.product.price),
@@ -92,7 +98,8 @@ class CartScreen extends StatelessWidget {
                             Column(
                               children: [
                                 IconButton(
-                                  onPressed: () => cart.increaseQuantity(item.key),
+                                  onPressed: () =>
+                                      cart.increaseQuantity(item.key),
                                   icon: const Icon(Icons.add_circle_outline),
                                 ),
                                 Text('${item.quantity}'),
@@ -103,14 +110,18 @@ class CartScreen extends StatelessWidget {
                                         context: context,
                                         builder: (_) => AlertDialog(
                                           title: const Text('Xóa sản phẩm?'),
-                                          content: const Text('Bạn có muốn xóa sản phẩm này?'),
+                                          content: const Text(
+                                            'Bạn có muốn xóa sản phẩm này?',
+                                          ),
                                           actions: [
                                             TextButton(
-                                              onPressed: () => Navigator.pop(context, false),
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
                                               child: const Text('Không'),
                                             ),
                                             FilledButton(
-                                              onPressed: () => Navigator.pop(context, true),
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
                                               child: const Text('Xóa'),
                                             ),
                                           ],
@@ -156,7 +167,8 @@ class CartScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => CheckoutScreen(items: cart.selectedItems),
+                              builder: (_) =>
+                                  CheckoutScreen(items: cart.selectedItems),
                             ),
                           );
                         },

@@ -120,8 +120,7 @@ class CartProvider extends ChangeNotifier {
       _items.clear();
 
       for (final item in data) {
-        final cartItem =
-            CartItem.fromStorageJson(item as Map<String, dynamic>);
+        final cartItem = CartItem.fromStorageJson(item as Map<String, dynamic>);
         _items[cartItem.key] = cartItem;
       }
 
